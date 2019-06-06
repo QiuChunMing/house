@@ -8,31 +8,21 @@ public class ApiResponse {
     private String msg;
     private Object data;
 
-
-    public static ApiResponse success() {
-        return success(null);
-    }
     public static ApiResponse success(Object o) {
+        return success("success", o);
+    }
+
+    public static ApiResponse success(String msg, Object o) {
         ApiResponse response = new ApiResponse();
-        response.setStatus(ResultCode.SUCCESS.code());
-        response.setMsg(ResultCode.SUCCESS.message());
+        response.setStatus(0);
+        response.setMsg(msg);
         response.setData(o);
         return response;
     }
 
-    public static ApiResponse fail(ResultCode resultCode) {
-        return fail(resultCode, null);
+    public static ApiResponse success() {
+        return success(null);
     }
 
-    public static ApiResponse fail(ResultCode resultCode,Object o) {
-        return fail(resultCode.code(), resultCode.message(), o);
-    }
-    public static ApiResponse fail(Integer code,String msg,Object o) {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(code);
-        apiResponse.setMsg(msg);
-        apiResponse.setData(o);
-        return apiResponse;
-    }
 
 }

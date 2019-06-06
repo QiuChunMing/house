@@ -1,6 +1,7 @@
 package com.example.house.controller;
 
 import com.example.house.base.ApiResponse;
+import com.example.house.domain.SupportAddress;
 import com.example.house.dto.SupportAddressDTO;
 import com.example.house.service.IAddressService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,31 +22,24 @@ public class AddressController {
     @GetMapping("/api/address/cities")
     public ApiResponse getSupportCities() {
         List<SupportAddressDTO> cities = addressService.findAllCities();
-        if (cities != null) {
-            return ApiResponse.success(cities);
-        } else {
-            return ApiResponse.fail("找不到支持的城市");
-        }
+        return ApiResponse.success(cities);
+
     }
 
     @GetMapping("/api/address/regions")
-    public ApiResponse getSupportRegion(@RequestParam("cityName") String cityEnName) {
-        List<SupportAddressDTO> regions = addressService.findAllRegionsByCityName(cityEnName);
-        return ApiResponse.success(regions);
+    public List<SupportAddressDTO> getSupportRegion(@RequestParam("cityName") String cityEnName) {
+        return addressService.findAllRegionsByCityName(cityEnName);
     }
 
     @PostMapping("/api/address/city/add")
-    public ApiResponse addCity(String cityName) {
-        log.info("cityName is {}", cityName);
-        addressService.addCity(cityName);
-        return ApiResponse.success();
+    public SupportAddress addCity(String cityName) {
+       return addressService.addCity(cityName);
     }
 
     @PostMapping("/api/address/region/add")
-    public ApiResponse addCity(String cityName, String regionName) {
+    public void addCity(String cityName, String regionName) {
         log.info("cityName is {}, regionName is {}", cityName, regionName);
         addressService.addRegion(cityName, regionName);
-        return ApiResponse.success();
     }
 
 

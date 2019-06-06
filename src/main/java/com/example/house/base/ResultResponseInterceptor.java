@@ -19,7 +19,7 @@ public class ResultResponseInterceptor implements HandlerInterceptor {
             //判断是否在类上加了注解
             if (beanType.isAnnotationPresent(ResultResponse.class)) {
                 //设置请求体，在ResponseAdvice接口进行判断
-                request.setAttribute(RESPONSE_RESULT_ANN,beanType.getAnnotation(ResultResponse.class));
+                request.setAttribute(RESPONSE_RESULT_ANN, beanType.getAnnotation(ResultResponse.class));
             } else if (method.isAnnotationPresent(ResultResponse.class)) {
                 //设置请求体，在ResponseAdvice接口进行判断
                 request.setAttribute(RESPONSE_RESULT_ANN, method.getAnnotation(ResultResponse.class));

@@ -1,10 +1,9 @@
 package com.example.house.exception;
 
-public class SubScribeException extends RuntimeException{
-    public SubScribeException(String message) {
-        super(message);
-    }
+import com.example.house.base.APIException;
 
-    public SubScribeException() {
+public class SubScribeException extends APIException {
+    public SubScribeException(String message) {
+        super(StatusCode.INVALID_PARAM,message);
     }
 }

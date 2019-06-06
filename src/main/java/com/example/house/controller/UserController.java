@@ -1,6 +1,5 @@
 package com.example.house.controller;
 
-import com.example.house.base.ApiResponse;
 import com.example.house.domain.User;
 import com.example.house.dto.UserDTO;
 import com.example.house.repository.UserRepository;
@@ -27,15 +26,13 @@ public class UserController {
     }
 
     @GetMapping("/api/userinfo/{id}")
-    public ApiResponse userInfo(@PathVariable("id") String userId) {
+    public UserDTO userInfo(@PathVariable("id") String userId) {
         log.info("获取用户详细信息id为{}", userId);
-        UserDTO userDTO = userService.findById(userId);
-        return ApiResponse.success(userDTO);
+        return userService.findById(userId);
     }
 
     @GetMapping("/api/users")
-    public ApiResponse allUsers() {
-        Iterable<User> all = userRepository.findAll();
-        return ApiResponse.success(all);
+    public Iterable<User> allUsers() {
+        return userRepository.findAll();
     }
 }

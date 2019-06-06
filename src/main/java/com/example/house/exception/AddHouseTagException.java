@@ -1,11 +1,13 @@
 package com.example.house.exception;
 
-import lombok.Data;
+import com.example.house.base.APIException;
 
-@Data
-public class AddHouseTagException extends RuntimeException {
-    public AddHouseTagException(String message) {
-        super(message);
+public class AddHouseTagException extends APIException {
+    public AddHouseTagException() {
+        super(StatusCode.INVALID_PARAM);
     }
 
+    public AddHouseTagException(String message) {
+        super(StatusCode.INVALID_PARAM, message);
+    }
 }

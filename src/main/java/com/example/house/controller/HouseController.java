@@ -6,6 +6,7 @@ import com.example.house.dto.HouseSubscribeDTO;
 import com.example.house.enmu.HouseStatus;
 import com.example.house.enmu.HouseSubscribeStatus;
 import com.example.house.es.ISearchService;
+import com.example.house.exception.BindResultException;
 import com.example.house.form.HouseForm;
 import com.example.house.form.PageSearch;
 import com.example.house.form.SearchForm;
@@ -39,99 +40,84 @@ public class HouseController {
 
 
     @PostMapping("/api/user/house/add")
-    public ApiResponse addHouse(@RequestBody HouseForm houseForm, BindingResult bindingResult) {
+    public HouseDTO addHouse(@RequestBody HouseForm houseForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<String> list = new ArrayList<>();
             for (ObjectError error : bindingResult.getAllErrors()) {
                 list.add(error.getDefaultMessage());
             }
-            return ApiResponse.fail(list.toString());
+            throw new BindResultException(list);
         }
-        HouseDTO houseDTO = houseService.save(houseForm);
-        return ApiResponse.success(houseDTO);
+        return houseService.save(houseForm);
     }
 
     @GetMapping("/api/user/house/list")
-    public ApiResponse listHouse(SearchForm searchForm) {
+    public List<HouseDTO> listHouse(SearchForm searchForm) {
         log.debug(searchForm.toString());
-        List<HouseDTO> dtos = houseService.query(searchForm);
-        return ApiResponse.success(dtos);
+        return houseService.query(searchForm);
     }
 
 
     @GetMapping("/api/admin/house/list")
-    public ApiResponse listHouse(PageSearch pageSearch) {
-
+    public List<HouseDTO> listHouse(PageSearch pageSearch) {
         log.debug(pageSearch.toString());
         Page<HouseDTO> pages = houseService.adminQuery(pageSearch);
         List<HouseDTO> houseDTOS = new ArrayList<>();
         pages.forEach(page -> {
             houseDTOS.add(page);
         });
-        ApiResponse apiResponse = ApiResponse.success(houseDTOS);
-        apiResponse.setTotal((int) pages.getTotalElements());
-        return apiResponse;
+        return houseDTOS;
     }
 
     @GetMapping("/api/user/house/photo/token")
     public Map<String, String> getUploadToken() {
-
         Map map = new HashMap();
         map.put("uptoken", imageService.getUploadToken());
         return map;
     }
 
     @PostMapping("/api/houses/auditing/{houseId}")
-    public ApiResponse auditingHouse(@PathVariable("houseId") String houseId) {
+    public void auditingHouse(@PathVariable("houseId") String houseId) {
         log.debug(houseId);
         if (houseId != null) {
             houseService.updateStatus(houseId, HouseStatus.PASSED.getStatus());
-            return ApiResponse.success();
         }
-        return ApiResponse.fail("houseId不能为空");
     }
 
     @GetMapping("/api/house/{houseId}")
-    public ApiResponse getDetail(@PathVariable String houseId) {
-        HouseDTO houseDTO = houseService.findHouseWithDetail(houseId);
-        return ApiResponse.success(houseDTO);
+    public HouseDTO getDetail(@PathVariable String houseId) {
+        return houseService.findHouseWithDetail(houseId);
     }
 
     @PostMapping(value = "api/user/house/subscribe")
     @ResponseBody
-    public ApiResponse subscribeHouse(@RequestParam(value = "houseId") String houseId) {
+    public void subscribeHouse(@RequestParam(value = "houseId") String houseId) {
         houseService.addSubscribeOrder(houseId);
-        return ApiResponse.success();
     }
 
     @PostMapping(value = "api/user/house/subscribe/delete")
-    public ApiResponse cancelSubscribe(@RequestParam(value = "houseId") String houseId) {
+    public void cancelSubscribe(@RequestParam(value = "houseId") String houseId) {
         log.info("删除订阅id:{}", houseId);
         houseService.cancelSubscribe(houseId);
-        return ApiResponse.success();
     }
 
     @GetMapping(value = "api/user/house/subscribe/list")
-    public ApiResponse listSubscribe() {
-        List<Pair<HouseDTO, HouseSubscribeDTO>> pairs = houseService.querySubscribeList(HouseSubscribeStatus.NO_SUBSCRIBE, 0, 20);
-        return ApiResponse.success(pairs);
+    public List<Pair<HouseDTO, HouseSubscribeDTO>> listSubscribe() {
+        return houseService.querySubscribeList(HouseSubscribeStatus.NO_SUBSCRIBE, 0, 20);
     }
 
     @GetMapping(value = "/api/admin/subscribe/list")
-    public ApiResponse allListSubscribe() {
-        List<Pair<HouseDTO, HouseSubscribeDTO>> pairs = houseService.querySubscribeList(HouseSubscribeStatus.NO_SUBSCRIBE, 0, 20);
-        return ApiResponse.success(pairs);
+    public List<Pair<HouseDTO, HouseSubscribeDTO>> allListSubscribe() {
+        return houseService.querySubscribeList(HouseSubscribeStatus.NO_SUBSCRIBE, 0, 20);
     }
 
     @PostMapping(value = "/api/admin/subscribe/finish")
-    public ApiResponse finishSub(@RequestParam("houseId") String houseId) {
+    public void finishSub(@RequestParam("houseId") String houseId) {
         houseService.finishSubscribe(houseId);
-        return ApiResponse.success(houseId);
     }
 
     @GetMapping(value = "/api/house/suggest")
-    public ApiResponse suggest(@RequestParam("prefix") String prefix) {
-        List<String> suggests = searchService.suggest(prefix);
-        return ApiResponse.success(suggests);
+    public List<String> suggest(@RequestParam("prefix") String prefix) {
+       return searchService.suggest(prefix);
     }
 }

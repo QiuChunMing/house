@@ -3,6 +3,7 @@ package com.example.house.base;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -32,9 +33,11 @@ public class ResultResponseHandler implements ResponseBodyAdvice<Object> {
             , ServerHttpResponse serverHttpResponse) {
         log.info("进入返回体重写格式");
         //将统一异常处理包装的结果再包装
-        if (o instanceof ErrorResult) {
-            ErrorResult result = (ErrorResult) o;
-            return ApiResponse.fail(result.getCode(), result.getMsg(), result.getErrors());
+        if (o instanceof ResponseEntity) {
+            ResponseEntity o1 = (ResponseEntity) o;
+            if (o1.getBody() instanceof ErrorBody) {
+                return o1;
+            }
         }
         return ApiResponse.success(o);
     }

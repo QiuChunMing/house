@@ -1,10 +1,13 @@
 package com.example.house.exception;
 
-public class AddressException extends RuntimeException {
+import com.example.house.base.APIException;
+
+public class AddressException extends APIException {
     public AddressException() {
+        super(StatusCode.INVALID_PARAM);
     }
 
     public AddressException(String message) {
-        super(message);
+        super(StatusCode.INVALID_PARAM, message);
     }
 }
