@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <guava.version>27.1-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <oauth2.version>2.1.2.RELEASE</oauth2.version>
     </properties>
 
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.1-jre</version>
+            <version>29.0-jre</version>
         </dependency>
 
         <dependency>
